@@ -23,3 +23,6 @@ coverage/
 *.tgz
 .env*
 
+# MCP Registry tokens (NEVER publish these!)
+.mcpregistry_*
+

@@ -1,6 +1,6 @@
 {
   "name": "@prinz_esox/swiss-health-mcp",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "mcpName": "io.github.remoprinz/swiss-health-mcp",
   "description": "MCP Server für Schweizer Krankenkassen-Prämien (2016-2026) - 1.6 Mio Datensätze vom BAG Priminfo | Swiss health insurance premium comparison",
   "type": "module",
@@ -42,7 +42,7 @@
     "chatgpt",
     "supabase"
   ],
-  "author": "Remo Prinz <remo@prinzweb.ch>",
+  "author": "Remo Prinz <remo@ragit.io>",
   "license": "MIT",
   "repository": {
     "type": "git",

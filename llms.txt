@@ -66,5 +66,5 @@ English:
 
 ## Contact
 
-Remo Prinz - remo@prinzweb.ch
+Remo Prinz - remo@ragit.io
 https://github.com/remoprinz/swiss-health-mcp
