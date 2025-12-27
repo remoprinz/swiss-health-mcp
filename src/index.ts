@@ -235,22 +235,31 @@ async function getCheapestInsurers(params: {
     return `⚠️ Keine Prämien gefunden für: ${canton}, ${year}, ${age_band}, CHF ${franchise_chf} Franchise, ${model_type}`;
   }
 
-  // Hole Versicherer-Namen
-  const insurerIds = [...new Set(data.map(d => d.insurer_id))];
-  const { data: insurers } = await db
-    .from("insurers")
-    .select("insurer_id, name")
-    .in("insurer_id", insurerIds);
+  // Gruppiere nach Versicherer-NAME (nicht ID), damit jeder Versicherer nur einmal erscheint
+  const bestByName = new Map<string, { premium: number; tariff: string; id: string }>();
+  for (const item of data) {
+    const name = getInsurerName(item.insurer_id);
+    const existing = bestByName.get(name);
+    if (!existing || item.monthly_premium_chf < existing.premium) {
+      bestByName.set(name, { 
+        premium: item.monthly_premium_chf, 
+        tariff: item.tariff_name || "",
+        id: item.insurer_id
+      });
+    }
+  }
 
-  const insurerMap = new Map(insurers?.map(i => [i.insurer_id, i.name]) || []);
+  // Sortiere nach Preis
+  const sorted = [...bestByName.entries()]
+    .sort((a, b) => a[1].premium - b[1].premium)
+    .slice(0, 5);
 
   // Formatiere Ergebnis
   let result = `🏆 Top 5 günstigste Krankenkassen\n`;
   result += `📍 ${canton} | ${year} | ${age_band} | CHF ${franchise_chf} Franchise | ${model_type}\n\n`;
 
-  data.slice(0, 5).forEach((item, index) => {
-    const name = insurerMap.get(item.insurer_id) || getInsurerName(item.insurer_id);
-    result += `${index + 1}. ${name}: CHF ${item.monthly_premium_chf.toFixed(2)}/Monat\n`;
+  sorted.forEach(([name, data], index) => {
+    result += `${index + 1}. ${name}: CHF ${data.premium.toFixed(2)}/Monat\n`;
   });
 
   result += DISCLAIMER;
