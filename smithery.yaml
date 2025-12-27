@@ -1,0 +1,27 @@
+# Smithery configuration for Swiss Health MCP Server
+# https://smithery.ai/docs
+
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      SUPABASE_URL:
+        type: string
+        description: "Supabase Project URL (e.g. https://xxx.supabase.co)"
+      SUPABASE_SERVICE_ROLE_KEY:
+        type: string
+        description: "Supabase Service Role Key for database access"
+    required:
+      - SUPABASE_URL
+      - SUPABASE_SERVICE_ROLE_KEY
+  commandFunction: |-
+    (config) => ({
+      command: 'npx',
+      args: ['-y', '@prinz_esox/swiss-health-mcp'],
+      env: {
+        SUPABASE_URL: config.SUPABASE_URL,
+        SUPABASE_SERVICE_ROLE_KEY: config.SUPABASE_SERVICE_ROLE_KEY
+      }
+    })
+

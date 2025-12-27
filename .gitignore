@@ -26,3 +26,6 @@ coverage/
 # Misc
 *.tgz
 
+# MCP Registry tokens (NEVER commit these!)
+.mcpregistry_*
+

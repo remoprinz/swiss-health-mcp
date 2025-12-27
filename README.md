@@ -1,11 +1,11 @@
 # 🏥 Swiss Health MCP Server
 
-[![npm version](https://badge.fury.io/js/%40remoprinz%2Fswiss-health-mcp.svg)](https://www.npmjs.com/package/@remoprinz/swiss-health-mcp)
+[![npm version](https://badge.fury.io/js/%40prinz_esox%2Fswiss-health-mcp.svg)](https://www.npmjs.com/package/@prinz_esox/swiss-health-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 **Der erste MCP-Server für Schweizer Krankenkassen-Prämien.**
 
-Ermöglicht KI-Assistenten (Claude, Cursor, etc.) direkten Zugriff auf **1.6 Millionen Prämiendaten** von 55 Versicherern über 11 Jahre (2016-2026).
+Ermöglicht KI-Assistenten (Claude, Cursor, ChatGPT, etc.) direkten Zugriff auf **1.6 Millionen Prämiendaten** von 55 Versicherern über 11 Jahre (2016-2026).
 
 ## 🎯 Features
 
@@ -35,7 +35,7 @@ Füge in `.cursor/mcp.json` hinzu:
   "mcpServers": {
     "swiss-health": {
       "command": "npx",
-      "args": ["-y", "@remoprinz/swiss-health-mcp"],
+      "args": ["-y", "@prinz_esox/swiss-health-mcp"],
       "env": {
         "SUPABASE_URL": "https://YOUR_PROJECT.supabase.co",
         "SUPABASE_SERVICE_ROLE_KEY": "YOUR_SERVICE_ROLE_KEY"
@@ -48,7 +48,7 @@ Füge in `.cursor/mcp.json` hinzu:
 ### Via npm (global)
 
 ```bash
-npm install -g @remoprinz/swiss-health-mcp
+npm install -g @prinz_esox/swiss-health-mcp
 ```
 
 ## 💬 Beispiel-Prompts
