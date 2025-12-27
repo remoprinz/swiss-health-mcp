@@ -1,0 +1,64 @@
+# Swiss Health MCP Server
+
+> MCP server for Swiss health insurance premiums (Krankenkassen-Prämien)
+
+## What this server does
+
+This MCP server provides AI assistants with access to 1.6 million Swiss health insurance premium records from 55 insurers spanning 2016-2026.
+
+## Available tools
+
+### get_cheapest_insurers
+Find the top 5 cheapest health insurers for a specific profile.
+- Required: canton, year, age_band, franchise_chf
+- Optional: model_type, accident_covered
+
+### compare_insurers  
+Compare multiple insurers for a specific profile.
+- Required: insurer_names (array), canton, year, age_band, franchise_chf
+
+### get_price_history
+Show price development of an insurer over multiple years.
+- Required: insurer_name, canton, age_band, franchise_chf
+- Optional: start_year, end_year
+
+### get_database_stats
+Show database statistics (entry counts, available years, insurers).
+
+## Data source
+
+BAG Priminfo (Swiss Federal Office of Public Health)
+https://priminfo.admin.ch
+
+## Parameters
+
+- Cantons: AG, AI, AR, BE, BL, BS, FR, GE, GL, GR, JU, LU, NE, NW, OW, SG, SH, SO, SZ, TG, TI, UR, VD, VS, ZG, ZH
+- Years: 2016-2026
+- Age bands: child (0-18), young_adult (19-25), adult (26+)
+- Franchises: 0, 100, 200, 300, 400, 500, 600, 1000, 1500, 2000, 2500 CHF
+- Models: standard, hmo, telmed, family_doctor, diverse
+
+## Example prompts
+
+- "What are the cheapest health insurers in Zurich for 2026?"
+- "Compare CSS, Helsana and Swica in Bern"
+- "How did Assura premiums develop from 2016 to 2026?"
+
+## Installation
+
+```json
+{
+  "mcpServers": {
+    "swiss-health": {
+      "command": "npx",
+      "args": ["-y", "@remoprinz/swiss-health-mcp"]
+    }
+  }
+}
+```
+
+## Contact
+
+Remo Prinz - remo@prinzweb.ch
+https://github.com/remoprinz/swiss-health-mcp
+

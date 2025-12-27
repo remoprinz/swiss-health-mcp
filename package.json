@@ -1,0 +1,55 @@
+{
+  "name": "@remoprinz/swiss-health-mcp",
+  "version": "1.0.0",
+  "description": "MCP Server für Schweizer Krankenkassen-Prämien (2016-2026) - 1.6 Mio Datensätze vom BAG Priminfo",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "swiss-health-mcp": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "supabase",
+    "swiss",
+    "switzerland",
+    "health",
+    "insurance",
+    "krankenkasse",
+    "krankenversicherung",
+    "priminfo",
+    "bag",
+    "ai",
+    "llm",
+    "claude",
+    "cursor"
+  ],
+  "author": "Remo Prinz <remo@prinzweb.ch>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/remoprinz/swiss-health-mcp.git"
+  },
+  "homepage": "https://github.com/remoprinz/swiss-health-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/remoprinz/swiss-health-mcp/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@supabase/supabase-js": "^2.39.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}
