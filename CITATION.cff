@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use this MCP server in your research or project, please cite it as below."
+title: "Swiss Health MCP Server"
+abstract: "The first Model Context Protocol (MCP) server providing AI assistants with structured access to 1.6 million Swiss health insurance premium records from BAG Priminfo (2016-2026)."
+authors:
+  - family-names: Prinz
+    given-names: Remo
+    email: remo@ragit.io
+    orcid: ""
+version: 1.0.8
+date-released: 2024-12-27
+url: "https://github.com/remoprinz/swiss-health-mcp"
+repository-code: "https://github.com/remoprinz/swiss-health-mcp"
+keywords:
+  - mcp
+  - model-context-protocol
+  - swiss
+  - switzerland
+  - health-insurance
+  - krankenkasse
+  - prämienvergleich
+  - artificial-intelligence
+  - llm
+  - ai-tools
+type: software
+license: MIT
+

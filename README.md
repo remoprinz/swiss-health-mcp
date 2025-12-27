@@ -105,10 +105,47 @@ npm run dev
 npm run build
 ```
 
+## 💡 Use Cases
+
+### Für Privatpersonen
+- 🔍 Günstigste Krankenkasse für das eigene Profil finden
+- 📈 Preisentwicklung der aktuellen Kasse nachvollziehen
+- 🏆 Mehrere Anbieter direkt vergleichen
+
+### Für Entwickler
+- 🤖 KI-Assistenten mit strukturierten Versicherungsdaten versorgen
+- 📊 Historische Prämien-Analysen durchführen
+- 🔧 Eigene Tools auf Basis der Daten bauen
+
+### Für Journalisten & Analysten
+- 📰 Faktenbasierte Artikel über Prämienentwicklung
+- 🌍 Kantonale Vergleiche visualisieren
+- 🔬 Marktanalysen des CH-Krankenversicherungsmarkts
+
+## 👤 About the Creator
+
+**Remo Prinz** ist AI Infrastructure Specialist und Pionier im Bereich Model Context Protocol (MCP).
+
+Mit dem **Swiss Health MCP Server** demonstriert er, wie öffentliche Daten (BAG Priminfo) durch MCP für KI-Assistenten nutzbar gemacht werden können – ohne Web-Scraping, ohne Halluzinationen, nur strukturierte, verlässliche Fakten.
+
+**Kontakt:**
+- 📧 Email: remo@ragit.io
+- 🐙 GitHub: [@remoprinz](https://github.com/remoprinz)
+- 🔗 MCP Registry: [io.github.remoprinz](https://registry.modelcontextprotocol.io/?q=remoprinz)
+
+**Organization:** Agentic Web Lab
+
+## 🔗 Links
+
+- 📦 [npm Package](https://www.npmjs.com/package/@prinz_esox/swiss-health-mcp)
+- 🏛️ [MCP Registry Eintrag](https://registry.modelcontextprotocol.io/?q=swiss-health)
+- 📊 [BAG Priminfo (Datenquelle)](https://priminfo.admin.ch)
+- 📖 [Model Context Protocol Docs](https://modelcontextprotocol.io)
+
 ## 📄 Lizenz
 
 MIT © [Remo Prinz](https://github.com/remoprinz)
 
 ---
 
-**Made with ❤️ in Switzerland 🇨🇭**
+**Made with ❤️ in Switzerland 🇨🇭 | First Swiss Health MCP Server | Built by Remo Prinz**
