@@ -37,8 +37,8 @@ Füge in `.cursor/mcp.json` hinzu:
       "command": "npx",
       "args": ["-y", "@remoprinz/swiss-health-mcp"],
       "env": {
-        "SUPABASE_URL": "https://llscftszrwvfpyxkaxiw.supabase.co",
-        "SUPABASE_SERVICE_ROLE_KEY": "YOUR_KEY_HERE"
+        "SUPABASE_URL": "https://YOUR_PROJECT.supabase.co",
+        "SUPABASE_SERVICE_ROLE_KEY": "YOUR_SERVICE_ROLE_KEY"
       }
     }
   }
