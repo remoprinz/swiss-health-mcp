@@ -43,14 +43,69 @@ function getInsurerName(insurerId: string): string {
   return INSURER_NAMES[normalizedId] || `Versicherer ${normalizedId}`;
 }
 
+// Haupt-IDs für bekannte Versicherer (bevorzugt bei Suche)
+const PRIMARY_INSURER_IDS: Record<string, string> = {
+  'helsana': '0312',
+  'css': '0008',
+  'swica': '0923',
+  'assura': '1318',
+  'kpt': '0376',
+  'groupe mutuel': '1113',
+  'sanitas': '0360',
+  'concordia': '0032',
+  'visana': '0134',
+  'ökk': '0455',
+  'sympany': '0881',
+  'atupri': '0194',
+  'egk': '1040',
+  'aquilana': '0246',
+  'galenos': '0290',
+  'agrisano': '1147'
+};
+
 function findInsurerIdByName(searchName: string): string | undefined {
-  const search = searchName.toLowerCase();
+  const search = searchName.toLowerCase().trim();
+  
+  // 1. Prüfe zuerst die Haupt-IDs (exakter Match)
+  if (PRIMARY_INSURER_IDS[search]) {
+    return PRIMARY_INSURER_IDS[search];
+  }
+  
+  // 2. Prüfe Haupt-IDs mit "enthält"
+  for (const [name, id] of Object.entries(PRIMARY_INSURER_IDS)) {
+    if (name.includes(search) || search.includes(name)) {
+      return id;
+    }
+  }
+  
+  // 3. Fallback: Suche im vollen Mapping
+  for (const [id, name] of Object.entries(INSURER_NAMES)) {
+    if (name.toLowerCase() === search) {
+      return id; // Exakter Match bevorzugt
+    }
+  }
+  
   for (const [id, name] of Object.entries(INSURER_NAMES)) {
     if (name.toLowerCase().includes(search) || search.includes(name.toLowerCase())) {
       return id;
     }
   }
+  
   return undefined;
+}
+
+// Findet ALLE IDs für einen Versicherer (für vollständige Daten)
+function findAllInsurerIds(searchName: string): string[] {
+  const search = searchName.toLowerCase().trim();
+  const ids: string[] = [];
+  
+  for (const [id, name] of Object.entries(INSURER_NAMES)) {
+    if (name.toLowerCase().includes(search) || search.includes(name.toLowerCase())) {
+      ids.push(id);
+    }
+  }
+  
+  return ids;
 }
 
 // ============================================
@@ -213,23 +268,32 @@ async function compareInsurers(params: {
   
   const { insurer_names, canton, year, age_band, franchise_chf } = params;
 
-  // Finde Versicherer-IDs basierend auf Namen (lokales Mapping)
-  const matchedInsurers: { searchName: string; id: string | undefined }[] = insurer_names.map(searchName => ({
-    searchName,
-    id: findInsurerIdByName(searchName)
-  }));
+  // Finde ALLE Versicherer-IDs für jeden Namen (z.B. Helsana hat 0312, 1322, 1479, 1568)
+  const matchedInsurers: { searchName: string; ids: string[]; primaryId: string | undefined }[] = 
+    insurer_names.map(searchName => ({
+      searchName,
+      ids: findAllInsurerIds(searchName),
+      primaryId: findInsurerIdByName(searchName)
+    }));
 
-  const foundIds = matchedInsurers
-    .filter(m => m.id)
-    .map(m => m.id!);
+  // Sammle alle IDs und tracke welche zu welchem Namen gehören
+  const allIds: string[] = [];
+  const idToSearchName = new Map<string, string>();
+  
+  for (const m of matchedInsurers) {
+    for (const id of m.ids) {
+      allIds.push(id);
+      idToSearchName.set(id, m.searchName);
+    }
+  }
 
-  const notFound = matchedInsurers.filter(m => !m.id).map(m => m.searchName);
+  const notFound = matchedInsurers.filter(m => m.ids.length === 0).map(m => m.searchName);
 
-  if (foundIds.length === 0) {
+  if (allIds.length === 0) {
     return `⚠️ Keine der Versicherer gefunden: ${insurer_names.join(", ")}\n\nVerfügbare Versicherer: CSS, Helsana, Swica, Assura, Concordia, Sanitas, KPT, ÖKK, Visana, Groupe Mutuel, Sympany, Atupri, EGK, Aquilana, Galenos`;
   }
 
-  // Hole Prämien für ALLE Tarife dieser Versicherer
+  // Hole Prämien für ALLE IDs
   const { data: premiums, error } = await db
     .from("premiums")
     .select("insurer_id, monthly_premium_chf, model_type")
@@ -237,18 +301,23 @@ async function compareInsurers(params: {
     .eq("year", year)
     .eq("age_band", age_band)
     .eq("franchise_chf", franchise_chf)
-    .in("insurer_id", foundIds);
+    .in("insurer_id", allIds);
 
   if (error || !premiums || premiums.length === 0) {
-    return `❌ Keine Prämien gefunden für: ${canton}, ${year}\n\nGefundene IDs: ${foundIds.join(", ")}`;
+    return `❌ Keine Prämien gefunden für: ${canton}, ${year}\n\nGesuchte IDs: ${allIds.join(", ")}`;
   }
 
-  // Gruppiere nach Versicherer (nimm günstigsten Tarif)
-  const bestByInsurer = new Map<string, { premium: number; model: string }>();
+  // Gruppiere nach SUCHNAME (nimm günstigsten Tarif pro Versicherer)
+  const bestByName = new Map<string, { premium: number; model: string; id: string }>();
   for (const p of premiums) {
-    const existing = bestByInsurer.get(p.insurer_id);
+    const searchName = idToSearchName.get(p.insurer_id) || p.insurer_id;
+    const existing = bestByName.get(searchName);
     if (!existing || p.monthly_premium_chf < existing.premium) {
-      bestByInsurer.set(p.insurer_id, { premium: p.monthly_premium_chf, model: p.model_type });
+      bestByName.set(searchName, { 
+        premium: p.monthly_premium_chf, 
+        model: p.model_type,
+        id: p.insurer_id 
+      });
     }
   }
 
@@ -256,12 +325,12 @@ async function compareInsurers(params: {
   let result = `📊 Versicherungsvergleich\n`;
   result += `📍 ${canton} | ${year} | ${age_band} | CHF ${franchise_chf} Franchise\n\n`;
 
-  const sorted = [...bestByInsurer.entries()]
+  const sorted = [...bestByName.entries()]
     .sort((a, b) => a[1].premium - b[1].premium);
   
-  sorted.forEach(([insurerId, data], index) => {
-    const name = getInsurerName(insurerId);
-    result += `${index + 1}. ${name}: CHF ${data.premium.toFixed(2)}/Monat (${data.model})\n`;
+  sorted.forEach(([searchName, data], index) => {
+    const displayName = getInsurerName(data.id);
+    result += `${index + 1}. ${displayName}: CHF ${data.premium.toFixed(2)}/Monat (${data.model})\n`;
   });
 
   if (notFound.length > 0) {
@@ -289,20 +358,21 @@ async function getPriceHistory(params: {
   
   const { insurer_name, canton, age_band, franchise_chf, start_year = 2016, end_year = 2026 } = params;
 
-  // Finde Versicherer-ID über lokales Mapping
-  const insurerId = findInsurerIdByName(insurer_name);
+  // Finde ALLE Versicherer-IDs (z.B. CSS hat 0008 und 1507)
+  const insurerIds = findAllInsurerIds(insurer_name);
+  const primaryId = findInsurerIdByName(insurer_name);
 
-  if (!insurerId) {
+  if (insurerIds.length === 0 || !primaryId) {
     return `⚠️ Versicherer "${insurer_name}" nicht gefunden\n\nVerfügbare Versicherer: CSS, Helsana, Swica, Assura, Concordia, Sanitas, KPT, ÖKK, Visana, Groupe Mutuel, Sympany, Atupri, EGK, Aquilana, Galenos`;
   }
 
-  const insurerDisplayName = getInsurerName(insurerId);
+  const insurerDisplayName = getInsurerName(primaryId);
 
-  // Hole Prämien über die Jahre (gruppiert pro Jahr, günstigster Tarif)
+  // Hole Prämien über die Jahre für ALLE IDs des Versicherers
   const { data: premiums, error } = await db
     .from("premiums")
-    .select("year, monthly_premium_chf, model_type")
-    .eq("insurer_id", insurerId)
+    .select("year, monthly_premium_chf, model_type, insurer_id")
+    .in("insurer_id", insurerIds)
     .eq("canton", canton.toUpperCase())
     .eq("age_band", age_band)
     .eq("franchise_chf", franchise_chf)
@@ -311,7 +381,7 @@ async function getPriceHistory(params: {
     .order("year", { ascending: true });
 
   if (error || !premiums || premiums.length === 0) {
-    return `❌ Keine Daten für ${insurerDisplayName} in ${canton} (ID: ${insurerId})`;
+    return `❌ Keine Daten für ${insurerDisplayName} in ${canton} (IDs: ${insurerIds.join(", ")})`;
   }
 
   // Gruppiere nach Jahr (günstigster Tarif pro Jahr)

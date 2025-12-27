@@ -1,6 +1,6 @@
 {
   "name": "@prinz_esox/swiss-health-mcp",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "mcpName": "io.github.remoprinz/swiss-health-mcp",
   "description": "MCP Server für Schweizer Krankenkassen-Prämien (2016-2026) - 1.6 Mio Datensätze vom BAG Priminfo | Swiss health insurance premium comparison",
   "type": "module",
