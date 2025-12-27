@@ -1,0 +1,25 @@
+# Source files (nur dist/ wird gebraucht)
+src/
+tsconfig.json
+
+# Development files
+.git/
+.gitignore
+*.log
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Test
+coverage/
+*.test.ts
+*.spec.ts
+
+# Misc
+*.tgz
+.env*
+
